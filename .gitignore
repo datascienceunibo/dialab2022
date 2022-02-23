@@ -114,5 +114,5 @@ dmypy.json
 .pyre/
 
 # generated notebook files
-*.nosol.ipynb
-*.sol.ipynb
+#*.nosol.ipynb
+#*.sol.ipynb
