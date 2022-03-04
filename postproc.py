@@ -24,8 +24,8 @@ def save_notebook(nb, nbfile):
         nbformat.write(nb, f)
 
 def process_notebook(nb):
-    nb_nosol = nbformat.v4.new_notebook()
-    nb_sol = nbformat.v4.new_notebook()
+    nb_nosol = nbformat.v4.new_notebook(nbformat_minor=4)
+    nb_sol = nbformat.v4.new_notebook(nbformat_minor=4)
     txt_sol = []
     for nnb in (nb_nosol, nb_sol):
         nnb.metadata.language_info = nb.metadata.language_info
@@ -52,6 +52,7 @@ def process_notebook(nb):
                         lines = cout.text.split("\n")
                         new_lines = lines[:int(magic[1])] + ["[...]"] + lines[-int(magic[2]):]
                         cout.text = "\n".join(new_lines)
+        cell.pop("id", None)
         for dnb in write_to:
             dnb.cells.append(cell)
     return nb_nosol, nb_sol, "\n\n".join(txt_sol)
@@ -70,7 +71,8 @@ def main():
     nosol_nb, sol_nb, sol_txt = process_notebook(input_nb)
     save_notebook(nosol_nb, nosol_path)
     save_notebook(sol_nb, sol_path)
-    print(sol_txt)
+    with open(input_path.parent / (base_file_name + ".sol.py"), "w") as f:
+        f.write(sol_txt)
 
 
 if __name__ == "__main__":
