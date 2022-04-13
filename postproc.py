@@ -48,7 +48,7 @@ def process_notebook(nb):
             elif magic[0] == "outsnip":
                 write_to = [nb_nosol, nb_sol]
                 for cout in cell.outputs:
-                    if cout.name == "stdout" and cout.output_type == "stream":
+                    if cout.output_type == "stream" and cout.name == "stdout":
                         lines = cout.text.split("\n")
                         new_lines = lines[:int(magic[1])] + ["[...]"] + lines[-int(magic[2]):]
                         cout.text = "\n".join(new_lines)
