@@ -1,10 +1,10 @@
 #! /usr/bin/env python3
 
-# Questo script utilizza la libreria "nbformat" per leggere e scrivere programmaticamente
-# dei notebook Jupyter. La utilizziamo per creare uno script che prenda un notebook
-# sorgente con delle annotazioni relative agli esercizi e crei due nuove copie del
-# notebook rispettivamente con ("sol") e senza ("nosol") le soluzioni e un file di testo
-# con le sole soluzioni.
+# Questo script utilizza la libreria nbformat per leggere e scrivere programmaticamente
+# dei notebook Jupyter. La utilizziamo leggere un notebook sorgente con delle
+# annotazioni relative agli esercizi e creare due nuove copie del notebook
+# rispettivamente con ("sol") e senza ("nosol") le soluzioni e un file di testo con le
+# sole soluzioni.
 
 
 from pathlib import Path
@@ -37,14 +37,14 @@ def process_notebook(nb):
             if magic[0] == "sol":
                 write_to = [nb_sol]
                 if len(magic) > 1:
-                    txt_sol.append("# {}\n{}".format(magic[1], cell.source))
-                else:
-                    txt_sol.append(cell.source)
+                    cell.source = f"# {magic[1]}\n{cell.source}"
+                txt_sol.append(cell.source)
             elif magic[0] == "nosol":
                 write_to = [nb_nosol]
             elif magic[0] == "solhead":
                 write_to = []
-                txt_sol.append("{}# {}".format("\n" if txt_sol else "", magic[1]))
+                sep = "\n" if txt_sol else ""
+                txt_sol.append(f"{sep}# {magic[1]}")
             elif magic[0] == "outsnip":
                 write_to = [nb_nosol, nb_sol]
                 for cout in cell.outputs:
