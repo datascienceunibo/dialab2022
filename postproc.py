@@ -1,10 +1,16 @@
-#! /usr/bin/env python3
+#!/usr/bin/env python3
 
 # Questo script utilizza la libreria nbformat per leggere e scrivere programmaticamente
-# dei notebook Jupyter. La utilizziamo leggere un notebook sorgente con delle
+# dei notebook Jupyter. La utilizziamo per leggere un notebook sorgente con delle
 # annotazioni relative agli esercizi e creare due nuove copie del notebook
 # rispettivamente con ("sol") e senza ("nosol") le soluzioni e un file di testo con le
 # sole soluzioni.
+
+##sol[:<commento>] = mostra cella solamente nelle soluzioni [col commento indicato]
+##nosol = mostra cella solamente nel notebook senza soluzioni
+##solhead:<titolo> = inserisci un titolo della sezione nel file con le sole soluzioni
+##outsnip:<X>:<Y> = mantieni solo le prime X e le ultime Y righe dell'output
+##noerr = non mostrare gli errori
 
 
 from pathlib import Path
@@ -52,6 +58,11 @@ def process_notebook(nb):
                         lines = cout.text.split("\n")
                         new_lines = lines[:int(magic[1])] + ["[...]"] + lines[-int(magic[2]):]
                         cout.text = "\n".join(new_lines)
+            elif magic[0] == "noerr":
+                write_to = [nb_nosol, nb_sol]
+                cell.outputs = [
+                    out for out in cell.outputs if out.output_type != "stream" or out.name != "stderr"
+                ]
         cell.pop("id", None)
         for dnb in write_to:
             dnb.cells.append(cell)
